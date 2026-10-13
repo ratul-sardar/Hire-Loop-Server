@@ -9,7 +9,7 @@ const jobSchema = new Schema(
 			required: true,
 			index: true,
 		},
-		postedBy: { type: String, required: true, unique: true, index: true },
+		postedBy: { type: String, required: true, index: true },
 		title: { type: String, required: true, trim: true },
 		category: { type: String, required: true, index: true },
 		type: {

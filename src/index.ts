@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express, { type Express, type Request, type Response } from "express";
 import { connectToDB } from "./db/database.db";
 import { errorHandler } from "./middleware/error.middleware";
+import { recruiterRouter } from "./routes/recruiter.route";
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ app.use(express.json());
 const port = process.env.SERVER_URI || 8888;
 
 // API's
-// app.use("/api/v1/");
+app.use("/api/v1/recruiter", recruiterRouter);
 
 // Error Handler
 app.use(errorHandler);
