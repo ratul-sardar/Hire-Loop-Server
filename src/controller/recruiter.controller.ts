@@ -109,7 +109,7 @@ export const deleteCompanyJob: RequestHandler = async (req, res, next) => {
 // Controller helper functions
 export const checkCompanyExist = async (user_id: string, res: Response) => {
 	if (!user_id) {
-		res.status(406).json({ message: "User id is requred" });
+		res.status(404).json({ message: "User id is requred" });
 		return null;
 	}
 	const company = await Company.findOne({ owner: user_id });

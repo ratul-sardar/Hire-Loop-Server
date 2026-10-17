@@ -6,7 +6,7 @@ import {
 	getCompanyData,
 	getCompanyJobs,
 	updateCompanyJob,
-} from "../controller/recruiter.contorller";
+} from "../controller/recruiter.controller";
 
 export const recruiterRouter = Router();
 

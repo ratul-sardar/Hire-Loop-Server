@@ -4,6 +4,7 @@ import express, { type Express, type Request, type Response } from "express";
 import { connectToDB } from "./db/database.db";
 import { errorHandler } from "./middleware/error.middleware";
 import { recruiterRouter } from "./routes/recruiter.route";
+import { seekerRouter } from "./routes/seeker.route";
 
 const port = process.env.SERVER_URI || 8888;
 dotenv.config();
@@ -14,6 +15,7 @@ app.use(express.json());
 
 // API's
 app.use("/api/v1/recruiter", recruiterRouter);
+app.use("/api/v1/", seekerRouter);
 
 // Error Handler
 app.use(errorHandler);
