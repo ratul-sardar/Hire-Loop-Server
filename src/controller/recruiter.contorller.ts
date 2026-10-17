@@ -8,6 +8,12 @@ export const getCompanyData: RequestHandler = async (req, res, next) => {
 
 	try {
 		const result = await Company.findOne({ owner: user_id });
+
+		if (!result)
+			return res
+				.status(404)
+				.json({ message: "company dosen't exist for this user!" });
+
 		return res.status(200).json(result);
 	} catch (e) {
 		next(e);
@@ -32,7 +38,9 @@ export const getCompanyJobs: RequestHandler = async (req, res, next) => {
 		const companyData = await Company.findOne({ owner: user_id });
 		if (!companyData) return res.status(404).json({ message: "Not Found!" });
 
-		const jobData = await Job.find({ owner: user_id });
+		const jobData = await Job.find({
+			$or: [{ postedBy: user_id }, { company: companyData._id }],
+		}).sort({ createdAt: -1 });
 		return res.status(200).json(jobData);
 	} catch (e) {
 		next(e);
@@ -66,6 +74,24 @@ export const createCompanyJob: RequestHandler = async (req, res, next) => {
 			status: "active",
 		});
 
+		res.status(201).json(job);
+	} catch (e) {
+		next(e);
+	}
+};
+export const updateCompanyJob: RequestHandler = async (req, res, next) => {
+	const { id: job_id } = req.params;
+	const user_id = await req.body?.user_id;
+	const payload = await req.body?.payload;
+
+	try {
+		const company = await Company.findOne({ owner: user_id });
+		if (!company) return res.status(404).json({ message: "Company not found" });
+
+		if (company.status !== "approved")
+			return res.status(403).json({ message: "Company is not approved" });
+
+		const job = await Job.findByIdAndUpdate(job_id, payload);
 		res.status(201).json(job);
 	} catch (e) {
 		next(e);

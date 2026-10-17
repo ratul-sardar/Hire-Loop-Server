@@ -5,13 +5,12 @@ import { connectToDB } from "./db/database.db";
 import { errorHandler } from "./middleware/error.middleware";
 import { recruiterRouter } from "./routes/recruiter.route";
 
+const port = process.env.SERVER_URI || 8888;
 dotenv.config();
 
 const app: Express = express();
 app.use(cors());
 app.use(express.json());
-
-const port = process.env.SERVER_URI || 8888;
 
 // API's
 app.use("/api/v1/recruiter", recruiterRouter);
@@ -24,7 +23,6 @@ const serverDescription = `
   <h2>Hello, visitor! Wellcome to the HireLoop Server.</h2>
   <h3>You will find the public Api's below:</h3>
   `;
-
 app.get("/", (req: Request, res: Response) => {
 	res.send(serverDescription);
 });

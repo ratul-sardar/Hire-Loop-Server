@@ -4,6 +4,7 @@ import {
 	createCompanyJob,
 	getCompanyData,
 	getCompanyJobs,
+	updateCompanyJob,
 } from "../controller/recruiter.contorller";
 
 export const recruiterRouter = Router();
@@ -15,3 +16,4 @@ recruiterRouter.post("/company", createCompany);
 // Job realted api's
 recruiterRouter.get("/company/job/:id", getCompanyJobs);
 recruiterRouter.post("/company/job/:id", createCompanyJob);
+recruiterRouter.patch("/company/job/:id", updateCompanyJob);
