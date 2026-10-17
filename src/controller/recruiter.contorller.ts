@@ -50,12 +50,13 @@ export const createCompanyJob: RequestHandler = async (req, res, next) => {
 	const { id: user_id } = req.params;
 
 	try {
-		await checkCompanyExist(user_id, res);
+		const company = await checkCompanyExist(user_id as string, res);
+		if (!company) return;
 
-		const maxJobCount = PLAN_LIMITS[company.plan as keyof typeof PLAN_LIMITS];
+		const maxJobCount = PLAN_LIMITS[company?.plan as keyof typeof PLAN_LIMITS];
 
 		const activeCount = await Job.countDocuments({
-			company: company._id,
+			company: company?._id,
 			status: "active",
 		});
 		if (activeCount >= maxJobCount)
@@ -65,7 +66,7 @@ export const createCompanyJob: RequestHandler = async (req, res, next) => {
 
 		const job = await Job.create({
 			...req.body,
-			company: company._id,
+			company: company?._id,
 			postedBy: user_id,
 			status: "active",
 		});
@@ -81,7 +82,8 @@ export const updateCompanyJob: RequestHandler = async (req, res, next) => {
 	const payload = await req.body?.payload;
 
 	try {
-		await checkCompanyExist(user_id, res);
+		const company = await checkCompanyExist(user_id, res);
+		if (!company) return;
 
 		const job = await Job.findByIdAndUpdate(job_id, payload);
 		res.status(204).json(job);
@@ -94,7 +96,8 @@ export const deleteCompanyJob: RequestHandler = async (req, res, next) => {
 	const user_id = await req.body?.user_id;
 
 	try {
-		await checkCompanyExist(user_id, res);
+		const company = await checkCompanyExist(user_id, res);
+		if (!company) return;
 
 		const job = await Job.findByIdAndDelete(job_id);
 		res.status(204).json(job);
@@ -105,11 +108,20 @@ export const deleteCompanyJob: RequestHandler = async (req, res, next) => {
 
 // Controller helper functions
 export const checkCompanyExist = async (user_id: string, res: Response) => {
+	if (!user_id) {
+		res.status(406).json({ message: "User id is requred" });
+		return null;
+	}
 	const company = await Company.findOne({ owner: user_id });
 
-	if (!company) return res.status(404).json({ message: "Company not found" });
-	if (company.status !== "approved")
-		return res.status(403).json({ message: "Company is not approved" });
+	if (!company) {
+		res.status(404).json({ message: "Company not found" });
+		return null;
+	}
+	if (company.status !== "approved") {
+		res.status(403).json({ message: "Company is not approved" });
+		return null;
+	}
 
-	return;
+	return company;
 };
