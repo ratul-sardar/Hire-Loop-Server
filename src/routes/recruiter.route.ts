@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
 	createCompany,
 	createCompanyJob,
+	deleteCompanyJob,
 	getCompanyData,
 	getCompanyJobs,
 	updateCompanyJob,
@@ -17,3 +18,4 @@ recruiterRouter.post("/company", createCompany);
 recruiterRouter.get("/company/job/:id", getCompanyJobs);
 recruiterRouter.post("/company/job/:id", createCompanyJob);
 recruiterRouter.patch("/company/job/:id", updateCompanyJob);
+recruiterRouter.delete("/company/job/:id", deleteCompanyJob);

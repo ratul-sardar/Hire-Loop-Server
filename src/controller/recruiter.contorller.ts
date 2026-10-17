@@ -1,4 +1,4 @@
-import type { RequestHandler } from "express";
+import type { RequestHandler, Response } from "express";
 import { Company, PLAN_LIMITS } from "../models/company.model";
 import { Job } from "../models/job.model";
 
@@ -50,11 +50,7 @@ export const createCompanyJob: RequestHandler = async (req, res, next) => {
 	const { id: user_id } = req.params;
 
 	try {
-		const company = await Company.findOne({ owner: user_id });
-		if (!company) return res.status(404).json({ message: "Company not found" });
-
-		if (company.status !== "approved")
-			return res.status(403).json({ message: "Company is not approved" });
+		await checkCompanyExist(user_id, res);
 
 		const maxJobCount = PLAN_LIMITS[company.plan as keyof typeof PLAN_LIMITS];
 
@@ -85,15 +81,35 @@ export const updateCompanyJob: RequestHandler = async (req, res, next) => {
 	const payload = await req.body?.payload;
 
 	try {
-		const company = await Company.findOne({ owner: user_id });
-		if (!company) return res.status(404).json({ message: "Company not found" });
-
-		if (company.status !== "approved")
-			return res.status(403).json({ message: "Company is not approved" });
+		await checkCompanyExist(user_id, res);
 
 		const job = await Job.findByIdAndUpdate(job_id, payload);
-		res.status(201).json(job);
+		res.status(204).json(job);
 	} catch (e) {
 		next(e);
 	}
+};
+export const deleteCompanyJob: RequestHandler = async (req, res, next) => {
+	const { id: job_id } = req.params;
+	const user_id = await req.body?.user_id;
+
+	try {
+		await checkCompanyExist(user_id, res);
+
+		const job = await Job.findByIdAndDelete(job_id);
+		res.status(204).json(job);
+	} catch (e) {
+		next(e);
+	}
+};
+
+// Controller helper functions
+export const checkCompanyExist = async (user_id: string, res: Response) => {
+	const company = await Company.findOne({ owner: user_id });
+
+	if (!company) return res.status(404).json({ message: "Company not found" });
+	if (company.status !== "approved")
+		return res.status(403).json({ message: "Company is not approved" });
+
+	return;
 };
