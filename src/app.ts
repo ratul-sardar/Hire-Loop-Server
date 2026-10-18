@@ -6,7 +6,6 @@ import { errorHandler } from "./middleware/error.middleware";
 import { recruiterRouter } from "./routes/recruiter.route";
 import { seekerRouter } from "./routes/seeker.route";
 
-const port = process.env.SERVER_URI || 8888;
 dotenv.config();
 
 const app: Express = express();
@@ -28,8 +27,4 @@ const serverDescription = `
 app.get("/", (req: Request, res: Response) => {
 	res.send(serverDescription);
 });
-
-app.listen(port, async () => {
-	console.log(`Server running at http://localhost:${port}`);
-	await connectToDB();
-});
+export default app;

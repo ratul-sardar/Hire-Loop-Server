@@ -106,7 +106,7 @@ export const deleteCompanyJob: RequestHandler = async (req, res, next) => {
 	}
 };
 
-// Controller helper functions
+// <--------------- Controller helper functions --------------->
 export const checkCompanyExist = async (user_id: string, res: Response) => {
 	if (!user_id) {
 		res.status(404).json({ message: "User id is requred" });

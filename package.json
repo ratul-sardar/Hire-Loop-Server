@@ -4,14 +4,17 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"dev": "bun --watch ./src/index.ts",
+		"dev": "bun --watch ./src/server.ts",
+		"start": "bun server.ts",
 		"lint": "bunx biome check",
 		"format": "bunx biome check --write",
-		"typeCheck": "bunx tsc --noEmit"
+		"type": "bunx tsc --noEmit"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.15",
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"@types/supertest": "^7.2.1",
+		"supertest": "^7.3.1"
 	},
 	"peerDependencies": {
 		"typescript": "^7"
